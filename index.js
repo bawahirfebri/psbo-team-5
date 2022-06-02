@@ -1,11 +1,34 @@
 const express = require('express')
 const app = express()
-const port = 3000
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+require('dotenv/config')
 
-app.get(`/`, (req, res) => {
-    res.send(`Hello World`)
-})
+// Middlewares
+app.use(cors())
+app.use(bodyParser.json())
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+// Import Routes
+const booksRoute = require('./routes/books')
+
+app.use('/api/books', booksRoute)
+
+// Connect to DB
+mongoose.connect(
+    process.env.MONGO_URI,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    },
+    () => {
+      console.log("Connected to MongoDB");
+    }
+  );
+
+  // Listen Server
+const PORT = process.env.PORT
+app.listen(
+    PORT, () => {
+    console.log(`Server started on port ${PORT}`)
 })
